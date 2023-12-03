@@ -1,8 +1,10 @@
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/usecase/user/login_usecase.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/post/post_list.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -20,11 +22,10 @@ class _HomeScreenState extends State<HomeScreen> {
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final LanguageStore _languageStore = getIt<LanguageStore>();
-  final FormStore _formStore = getIt<FormStore>();
+  final UserStore _userStore = getIt<UserStore>();
 
   @override
   Widget build(BuildContext context) {
-    print(_formStore.success);
     return Scaffold(
       appBar: _buildAppBar(),
       body: PostListScreen(),
@@ -146,55 +147,62 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildProfileButton() {
-    print(_formStore.userEmail);
-    return Observer(
-      builder: (context) => IconButton(
-        onPressed: () {
-          // Navigator.of(context).pushNamed(Routes.profile);
-          _showDialog(
-              context: context,
-              child: MaterialDialog(
-                borderRadius: 5.0,
-                enableFullWidth: true,
-                title: Text(
-                  'Profile',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.0,
+    TextEditingController _emailController = TextEditingController();
+    _emailController.text = _userStore.loginParams?.username ?? '';
+    TextEditingController _passwordController = TextEditingController();
+    _passwordController.text = _userStore.loginParams?.password ?? '';
+
+    return IconButton(
+      onPressed: () {
+        // Navigator.of(context).pushNamed(Routes.profile);
+        _showDialog(
+            context: context,
+            child: MaterialDialog(
+              borderRadius: 5.0,
+              enableFullWidth: true,
+              title: Text(
+                'Profile',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+              headerColor: Theme.of(context).primaryColor,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              closeButtonColor: Colors.white,
+              enableCloseButton: true,
+              enableBackButton: false,
+              onCloseButtonClicked: () {
+                Navigator.of(context).pop();
+              },
+              children: [
+                Observer(
+                  builder: (context) => TextField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      labelText: 'user email',
+                    ),
                   ),
                 ),
-                headerColor: Theme.of(context).primaryColor,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                closeButtonColor: Colors.white,
-                enableCloseButton: true,
-                enableBackButton: false,
-                onCloseButtonClicked: () {
-                  Navigator.of(context).pop();
-                },
-                children: [
-                  Observer(
-                    builder: (context) => TextField(
-                      controller:
-                          TextEditingController(text: _formStore.userEmail),
-                      decoration: InputDecoration(
-                        labelText: 'user email',
-                      ),
-                    ),
+                TextField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'password',
                   ),
-                  TextField(
-                    controller:
-                        TextEditingController(text: _formStore.password),
-                    decoration: InputDecoration(
-                      labelText: 'password',
-                    ),
-                  ),
-                  ElevatedButton(onPressed: () {}, child: Text('Save changes'))
-                ],
-              ));
-        },
-        icon: Icon(
-          Icons.person,
-        ),
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      _userStore.setLoginParams(LoginParams(
+                          username: _emailController.text,
+                          password: _passwordController.text));
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Save changes'))
+              ],
+            ));
+      },
+      icon: Icon(
+        Icons.person,
       ),
     );
   }

@@ -63,15 +63,22 @@ abstract class _UserStore with Store {
   @observable
   ObservableFuture<User?> loginFuture = emptyLoginResponse;
 
+  @observable
+  LoginParams? loginParams;
+
+  @action
+  void setLoginParams(LoginParams params) {
+    loginParams = params;
+  }
+
   @computed
   bool get isLoading => loginFuture.status == FutureStatus.pending;
 
   // actions:-------------------------------------------------------------------
   @action
   Future login(String email, String password) async {
-    final LoginParams loginParams =
-        LoginParams(username: email, password: password);
-    final future = _loginUseCase.call(params: loginParams);
+    loginParams = LoginParams(username: email, password: password);
+    final future = _loginUseCase.call(params: loginParams!);
     loginFuture = ObservableFuture(future);
 
     await future.then((value) async {
