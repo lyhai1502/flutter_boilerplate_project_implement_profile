@@ -11,6 +11,7 @@ import 'package:boilerplate/presentation/home/store/language/language_store.dart
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/post/store/post_store.dart';
+import 'package:boilerplate/presentation/profile/store/profile.dart';
 
 import '../../../di/service_locator.dart';
 
@@ -52,6 +53,12 @@ mixin StoreModule {
       LanguageStore(
         getIt<SettingRepository>(),
         getIt<ErrorStore>(),
+      ),
+    );
+
+    getIt.registerSingleton<Profile>(
+      Profile(
+        getIt<UserStore>()
       ),
     );
   }

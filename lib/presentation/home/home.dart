@@ -154,52 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return IconButton(
       onPressed: () {
-        // Navigator.of(context).pushNamed(Routes.profile);
-        _showDialog(
-            context: context,
-            child: MaterialDialog(
-              borderRadius: 5.0,
-              enableFullWidth: true,
-              title: Text(
-                'Profile',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.0,
-                ),
-              ),
-              headerColor: Theme.of(context).primaryColor,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              closeButtonColor: Colors.white,
-              enableCloseButton: true,
-              enableBackButton: false,
-              onCloseButtonClicked: () {
-                Navigator.of(context).pop();
-              },
-              children: [
-                Observer(
-                  builder: (context) => TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'user email',
-                    ),
-                  ),
-                ),
-                TextField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'password',
-                  ),
-                ),
-                ElevatedButton(
-                    onPressed: () {
-                      _userStore.setLoginParams(LoginParams(
-                          username: _emailController.text,
-                          password: _passwordController.text));
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Save changes'))
-              ],
-            ));
+        Navigator.of(context).pushNamed(Routes.profile);
       },
       icon: Icon(
         Icons.person,
