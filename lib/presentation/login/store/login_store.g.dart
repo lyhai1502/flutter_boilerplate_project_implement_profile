@@ -47,6 +47,22 @@ mixin _$UserStore on _UserStore, Store {
     });
   }
 
+  late final _$loginParamsAtom =
+      Atom(name: '_UserStore.loginParams', context: context);
+
+  @override
+  LoginParams? get loginParams {
+    _$loginParamsAtom.reportRead();
+    return super.loginParams;
+  }
+
+  @override
+  set loginParams(LoginParams? value) {
+    _$loginParamsAtom.reportWrite(value, super.loginParams, () {
+      super.loginParams = value;
+    });
+  }
+
   late final _$loginAsyncAction =
       AsyncAction('_UserStore.login', context: context);
 
@@ -55,11 +71,26 @@ mixin _$UserStore on _UserStore, Store {
     return _$loginAsyncAction.run(() => super.login(email, password));
   }
 
+  late final _$_UserStoreActionController =
+      ActionController(name: '_UserStore', context: context);
+
+  @override
+  void setLoginParams(LoginParams params) {
+    final _$actionInfo = _$_UserStoreActionController.startAction(
+        name: '_UserStore.setLoginParams');
+    try {
+      return super.setLoginParams(params);
+    } finally {
+      _$_UserStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
 success: ${success},
 loginFuture: ${loginFuture},
+loginParams: ${loginParams},
 isLoading: ${isLoading}
     ''';
   }
